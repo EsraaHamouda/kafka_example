@@ -1,5 +1,7 @@
 package services;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +33,12 @@ public class MyProducer {
     }
 
     public String sendUserMessage(User user) {
-        userKafkaTemplate.send(TOPIC, user);
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            kafkaTemplate.send(TOPIC, mapper.writeValueAsString(user));
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
         return "Json Message is send successfully";
     }
 
